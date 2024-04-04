@@ -1,8 +1,4 @@
-import { createRootRoute, Link } from "@tanstack/react-router"
-
-export const Route = createRootRoute({
-  component: Navbar,
-})
+import { createRootRoute, Link, Outlet } from "@tanstack/react-router"
 
 function Navbar() {
   return (
@@ -16,3 +12,14 @@ function Navbar() {
     </div>
   )
 }
+
+export const Route = createRootRoute({
+  component: () => {
+    return (
+      <>
+        <Navbar />
+        <Outlet />
+      </>
+    )
+  },
+})

@@ -1,9 +1,15 @@
 import { createLazyFileRoute } from "@tanstack/react-router"
+import Navbar from "@/components/ui/navbar"
 
 export const Route = createLazyFileRoute("/about")({
   component: About,
 })
 
 function About() {
-  return <div className="p-2">Hello from About!</div>
+  return (
+    <>
+      <Navbar />
+      {/* <img src="/stima2-bg.jpg" alt="background Image"></img> */}
+    </>
+  )
 }

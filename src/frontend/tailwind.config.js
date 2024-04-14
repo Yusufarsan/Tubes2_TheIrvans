@@ -17,6 +17,10 @@ module.exports = {
       },
     },
     extend: {
+        fontFamily: {
+            Lobster: ['Lobster'],
+            Akaya: ['Akaya Kanadaka'],
+        },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

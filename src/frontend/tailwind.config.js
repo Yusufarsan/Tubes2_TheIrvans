@@ -17,20 +17,20 @@ module.exports = {
       },
     },
     extend: {
-        fontFamily: {
-            Lobster: ['Lobster'],
-            Akaya: ['Akaya Kanadaka'],
-        },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        text: '#DFFDDB',
-        bg: '#061801',
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        primary: '#0B5400',
-        secondary: '#0A9B90',
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
@@ -39,7 +39,10 @@ module.exports = {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-        accent: '#25C9F2',
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

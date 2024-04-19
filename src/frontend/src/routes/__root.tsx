@@ -1,10 +1,11 @@
 import { createRootRoute, Link, Outlet } from "@tanstack/react-router"
+import { ThemeProvider } from "@/components/theme-provider"
 
 const Navbar = () => {
   return (
     <div>
       <div
-        className="shadow-inner-2xl  font-Lobster flex flex-row justify-between bg-background p-2 text-foreground transition-opacity duration-500 ease-in-out"
+        className="shadow-inner-2xl  flex flex-row justify-between bg-background p-2 font-Lobster text-foreground transition-opacity duration-500 ease-in-out"
         data-replace='{ "opacity-0": "opacity-100" }'
       >
         <Link to="/" className="hover:font-bold">
@@ -17,7 +18,7 @@ const Navbar = () => {
             <div>
               <div className="ml-4">
                 <div>Tugas Besar 2 Stima</div>
-                <div className=" font-Akaya flex">By TheIrvans</div>
+                <div className=" flex font-Akaya">By TheIrvans</div>
               </div>
             </div>
           </div>
@@ -38,8 +39,10 @@ export const Route = createRootRoute({
   component: () => {
     return (
       <>
-        <Navbar />
-        <Outlet />
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <Navbar />
+          <Outlet />
+        </ThemeProvider>
       </>
     )
   },

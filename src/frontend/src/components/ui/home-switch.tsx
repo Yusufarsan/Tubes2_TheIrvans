@@ -9,7 +9,7 @@ function HomeSwitch() {
 
   return (
     <>
-      <div className="flex space-x-1 font-Akaya items-center">
+      <div className="font-Akaya text-[30px] text-foreground flex space-x-[10px] font-Akaya items-center">
         <Switch onClick={() => setChecked(!checked)} />
         {checked ? <p>On</p> : <p>Off</p>}
       </div>

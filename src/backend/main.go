@@ -7,8 +7,9 @@ import (
 )
 
 type linkJson struct {
-	Start string `json:"start"`
-	End   string `json:"end"`
+	Start      string `json:"start"`
+	End        string `json:"end"`
+	IsMultiple bool   `json:"isMultiple"`
 }
 
 var baseURL = "https://en.wikipedia.org"
@@ -26,8 +27,14 @@ func setupRouter() *gin.Engine {
 
 		start := link.Start
 		end := link.End
+		isMultiple := link.IsMultiple
 
-		result := bfs(start, end, baseURL)
+		var result [][]string
+		if isMultiple {
+			result = bfs(start, end, baseURL)
+		} else {
+			result = bfs_single(start, end, baseURL)
+		}
 
 		c.JSON(http.StatusOK, result)
 	})

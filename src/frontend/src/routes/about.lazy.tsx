@@ -8,7 +8,7 @@ export const Route = createLazyFileRoute("/about")({
 function About() {
   return (
     <>
-      <main className=" relative flex min-h-[calc(100vh-48px)] flex-col gap-12 bg-background text-justify font-Akaya text-[40px] text-foreground">
+      <main className=" relative flex min-h-[calc(100vh-80px)] flex-col gap-12 bg-background text-justify font-Akaya text-[40px] text-foreground">
         <img
           src="stima2-bg.jpg"
           alt="Background Image"

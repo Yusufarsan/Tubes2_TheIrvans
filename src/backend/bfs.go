@@ -161,6 +161,7 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 	return solutions.Get()
 }
 
+// Masih salah
 func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
 	correctURL := SafeMap[[]string]{data: make(map[string][]string)}

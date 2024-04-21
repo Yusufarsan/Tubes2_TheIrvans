@@ -161,102 +161,91 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 	return solutions.Get()
 }
 
-// Masih salah
 func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
 	correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
+	found := false
 
-	solutions := SafeArray[[]string]{}
+	var paths SafeArray[[]string]
+	paths.Add([]string{startURL})
 
-	found := make(chan struct{})
-	stopSearch := make(chan struct{})
-	var once sync.Once
+	var solutions SafeArray[[]string]
 
-	go func() {
-		for {
-			select {
-			case <-stopSearch:
-				return
-			default:
-				var paths SafeArray[[]string]
-				paths.Add([]string{startURL})
+	for !found {
+		var newPaths SafeArray[[]string]
+		pathsSize := len(paths.Get())
+		var wg sync.WaitGroup
+		wg.Add(pathsSize)
 
-				for len(paths.Get()) > 0 {
-					var newPaths SafeArray[[]string]
-					pathsSize := len(paths.Get())
-					var wg sync.WaitGroup
-					wg.Add(pathsSize)
+		maxConcurrentRequests := 250
 
-					maxConcurrentRequests := 250
-					sem := make(chan struct{}, maxConcurrentRequests)
+		sem := make(chan struct{}, maxConcurrentRequests)
 
-					for i := 0; i < pathsSize; i++ {
-						sem <- struct{}{}
-						go func(i int) {
-							defer func() { <-sem }()
-							defer wg.Done()
-							p := paths.Get()[i]
-							node := p[len(p)-1]
+		for i := 0; i < pathsSize; i++ {
+			sem <- struct{}{}
+			go func(i int) {
+				defer func() { <-sem }()
+				defer wg.Done()
+				p := paths.Get()[i]
+				node := p[len(p)-1]
 
-							if value, ok := correctURL.Get(node); ok {
-								fmt.Println("Correct URL")
-								for _, path := range value {
-									newPath := append([]string{}, p...)
-									newPath = append(newPath, path)
-									newPaths.Add(newPath)
-								}
-								return
-							}
-
-							if _, ok := queriedURL.Get(node); ok {
-								fmt.Println("Already queried")
-								return
-							}
-
-							doc := makeRequest(node)
-
-							if doc != nil {
-								duplicateURL := make(map[string]bool)
-								doc.Find("a").Each(func(_ int, s *goquery.Selection) {
-									link, _ := s.Attr("href")
-									matched, _ := regexp.MatchString("^/wiki/", link)
-
-									if matched && !duplicateURL[baseURL+link] {
-										duplicateURL[baseURL+link] = true
-
-										if baseURL+link == endURL {
-											fmt.Println("Found!")
-											value, _ := correctURL.Get(node)
-											correctURL.Add(node, append(value, baseURL+link))
-											solution := append(p, baseURL+link)
-											solutions.Add(solution)
-											once.Do(func() { close(found) })
-										}
-
-										_, ok := visitedURL.Get(baseURL + link)
-										if !ok {
-											visitedURL.Add(baseURL+link, true)
-											newPath := make([]string, len(p))
-											copy(newPath, p)
-											newPath = append(newPath, baseURL+link)
-											newPaths.Add(newPath)
-										}
-									}
-								})
-								queriedURL.Add(node, true)
-							}
-						}(i)
+				if value, ok := correctURL.Get(node); ok {
+					fmt.Println("Correct URL")
+					for _, path := range value {
+						newPath := append([]string{}, p...)
+						newPath = append(newPath, path)
+						newPaths.Add(newPath)
 					}
-
-					wg.Wait()
-					paths.Set(newPaths.Get())
+					return
 				}
-			}
-		}
-	}()
 
-	<-found
-	close(stopSearch)
+				if found {
+					return
+				}
+
+				if _, ok := queriedURL.Get(node); ok {
+					fmt.Println("Already queried")
+					return
+				}
+
+				doc := makeRequest(node)
+
+				if doc != nil {
+					duplicateURL := make(map[string]bool)
+					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+						link, _ := s.Attr("href")
+						matched, _ := regexp.MatchString("^/wiki/", link)
+
+						if matched && !duplicateURL[baseURL+link] {
+							duplicateURL[baseURL+link] = true
+
+							if baseURL+link == endURL && !found {
+								fmt.Println("Found!")
+								value, _ := correctURL.Get(node)
+								correctURL.Add(node, append(value, baseURL+link))
+								found = true
+								solutions.Add(append(p, baseURL+link))
+							}
+
+							_, ok := visitedURL.Get(baseURL + link)
+							if !found && !ok {
+								visitedURL.Add(baseURL+link, true)
+								newPath := make([]string, len(p))
+								copy(newPath, p)
+								newPath = append(newPath, baseURL+link)
+								newPaths.Add(newPath)
+							}
+						}
+					})
+					queriedURL.Add(node, true)
+				}
+			}(i)
+		}
+
+		wg.Wait()
+		paths.Set(newPaths.Get())
+	}
+
 	return solutions.Get()
 }

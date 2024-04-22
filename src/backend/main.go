@@ -2,14 +2,14 @@ package main
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type linkJson struct {
-	Start      string `json:"start"`
-	End        string `json:"end"`
-	IsMultiple bool   `json:"isMultiple"`
+	Start string `json:"start"`
+	End   string `json:"end"`
 }
 
 var baseURL = "https://en.wikipedia.org"
@@ -40,9 +40,11 @@ func setupRouter() *gin.Engine {
 		start := link.Start
 		end := link.End
 
+		time_start := time.Now()
 		result := bfs(start, end, baseURL)
+		time_elapsed := time.Since(time_start)
 
-		c.JSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, gin.H{"result": result, "time_elapsed": time_elapsed.Milliseconds()})
 	})
 
 	r.POST("/single/bfs", func(c *gin.Context) {
@@ -56,9 +58,11 @@ func setupRouter() *gin.Engine {
 		start := link.Start
 		end := link.End
 
+		time_start := time.Now()
 		result := bfs_single(start, end, baseURL)
+		time_elapsed := time.Since(time_start)
 
-		c.JSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, gin.H{"result": result, "time_elapsed": time_elapsed.Milliseconds()})
 	})
 
 	return r

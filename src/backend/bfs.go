@@ -2,79 +2,11 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"net/http"
 	"regexp"
 	"sync"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
-
-type SafeMap[T any] struct {
-	mu   sync.Mutex
-	data map[string]T
-}
-
-func (s *SafeMap[T]) Add(key string, value T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.data[key] = value
-}
-
-func (s *SafeMap[T]) Get(key string) (T, bool) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	value, ok := s.data[key]
-	return value, ok
-}
-
-type SafeArray[T any] struct {
-	mu    sync.Mutex
-	array []T
-}
-
-func (s *SafeArray[T]) Add(value T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.array = append(s.array, value)
-}
-
-func (s *SafeArray[T]) Get() []T {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.array
-}
-
-func (s *SafeArray[T]) Set(array []T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.array = array
-}
-
-func makeRequest(url string) *goquery.Document {
-	res, err := http.Get(url)
-
-	time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
-
-	if err != nil {
-		return nil
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		return nil
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-
-	if err != nil {
-		return nil
-	}
-
-	return doc
-}
 
 func bfs(startURL string, endURL string, baseURL string) [][]string {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}

@@ -86,37 +86,43 @@ function Index() {
     <form
       method="post"
       onSubmit={handleSubmit}
-      className="flex min-h-[calc(100vh-80px)] flex-col items-center gap-[29px] bg-background"
+      className="z-20 flex min-h-[calc(100vh-80px)] flex-col items-center gap-[29px] bg-background"
     >
-      <p className="mt-[48px] flex justify-center font-Akaya text-[30px] text-foreground">
+      <img
+          src="stima2-bg.jpg"
+          alt="Background Image"
+          className="z-0 absolute h-full w-full object-cover"
+        />
+        <div className="z-0 absolute h-full w-full bg-background opacity-80"></div>
+      <p className="z-10 mt-[48px] flex justify-center font-Akaya text-[30px] text-foreground">
         Find the shortest path from
       </p>
 
-      <div className="flex w-fit flex-col items-center gap-[29px]">
-        <div className="flex items-center gap-[43px]">
+      <div className="z-10 flex w-fit flex-col items-center gap-[29px]">
+        <div className="z-20 flex items-center gap-[43px]">
           <AutoComplete placeholder="Start Title" setURL={setStartURL} />
-          <p className="font-Akaya text-[30px] text-foreground">to</p>
+          <p className="z-10 font-Akaya text-[30px] text-foreground">to</p>
           <AutoComplete placeholder="Goal Title" setURL={setGoalURL} />
         </div>
 
-        <div className=" flex items-center justify-center self-end">
-          <p className="mr-[58px] font-Akaya text-[30px] text-foreground">
+        <div className="z-10  flex items-center justify-center self-end">
+          <p className="z-10 mr-[58px] font-Akaya text-[30px] text-foreground">
             Select searching method:
           </p>
           <HomeSelect setSearchMethod={setSearchMethod} />
         </div>
       </div>
 
-      <div className="mr-[180px] flex items-center">
-        <p className="mr-[58px] font-Akaya text-[30px] text-foreground">
+      <div className="z-0 mr-[180px] flex items-center">
+        <p className="z-10 mr-[58px] font-Akaya text-[30px] text-foreground">
           Show more than one path:
         </p>
         <HomeSwitch setValue={setShowMultiplePath} />
       </div>
 
-      <div className=" flex items-center justify-center">
+      <div className="z-0  flex items-center justify-center">
         <Button
-          className="w-[240px] border-[3px] border-foreground bg-secondary py-[32px] font-Akaya text-[30px] text-foreground hover:bg-accent"
+          className="z-0 w-[240px] border-[3px] border-foreground bg-secondary py-[32px] font-Akaya text-[30px] text-foreground hover:bg-accent"
           variant="default"
           size="lg"
           type="submit"
@@ -125,10 +131,10 @@ function Index() {
         </Button>
       </div>
 
-      {/* <p className=" max-w-[500px] text-center font-Akaya text-[30px] text-foreground">
+      {/* <p className="z-10  max-w-[500px] text-center font-Akaya text-[30px] text-foreground">
         Found path from{" "}
-        <span className="text-accent underline">Start Title</span> to{" "}
-        <span className="text-accent underline">Goal Title </span>
+        <span className="z-10 text-accent underline">Start Title</span> to{" "}
+        <span className="z-10 text-accent underline">Goal Title </span>
         with 99 article(s) after checking 999 article(s) in 300.15 seconds
       </p> */}
     </form>

@@ -10,6 +10,9 @@ import {
 import { Button } from "@/components/ui/button"
 import AutoComplete from "@/components/ui/autocomplete"
 import { useState } from "react"
+import { GraphData, Result } from "@/types/result"
+import { getTitle, graphiphy } from "@/lib/graph-formatter"
+import { GraphCanvas, lightTheme } from "reagraph"
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -37,16 +40,42 @@ function HomeSelect({
   )
 }
 
+const myTheme = {
+  ...lightTheme,
+  canvas: {
+    background: "#DFFDDB",
+    fog: "#DFFDDB",
+  },
+  node: {
+    ...lightTheme.node,
+    fill: "#061801",
+    label: {
+      ...lightTheme.node.label,
+      color: "#061801",
+    },
+  },
+  edge: {
+    ...lightTheme.edge,
+    fill: "#0A9B90",
+  },
+  arrow: {
+    ...lightTheme.arrow,
+    fill: "#0A9B90",
+  },
+}
+
 function Index() {
   const [startURL, setStartURL] = useState<string>("")
   const [goalURL, setGoalURL] = useState<string>("")
   const [searchMethod, setSearchMethod] = useState<string>("ids")
   const [showMultiplePath, setShowMultiplePath] = useState<boolean>(false)
-
-  console.log(startURL, goalURL)
+  const [result, setResult] = useState<Result | null>(null)
+  const [graphData, setGraphData] = useState<GraphData | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
+    setResult(null)
+    setGraphData(null)
 
     if (showMultiplePath) {
       const data = await fetch(
@@ -63,8 +92,15 @@ function Index() {
         },
       )
 
+      if (!data.ok) {
+        console.error("Failed to fetch data")
+        return
+      }
+
       const response = await data.json()
-      console.log(response)
+      setResult(response)
+      const { nodes, edges } = graphiphy(response)
+      setGraphData({ nodes, edges })
     } else {
       const data = await fetch(`http://localhost:8080/single/${searchMethod}`, {
         method: "POST",
@@ -77,8 +113,15 @@ function Index() {
         }),
       })
 
+      if (!data.ok) {
+        console.error("Failed to fetch data")
+        return
+      }
+
       const response = await data.json()
-      console.log(response)
+      setResult(response)
+      const { nodes, edges } = graphiphy(response)
+      setGraphData({ nodes, edges })
     }
   }
 
@@ -124,13 +167,33 @@ function Index() {
           Find!
         </Button>
       </div>
-
-      {/* <p className=" max-w-[500px] text-center font-Akaya text-[30px] text-foreground">
-        Found path from{" "}
-        <span className="text-accent underline">Start Title</span> to{" "}
-        <span className="text-accent underline">Goal Title </span>
-        with 99 article(s) after checking 999 article(s) in 300.15 seconds
-      </p> */}
+      {result && graphData && (
+        <section className="relative flex min-h-screen flex-col items-center gap-[29px] bg-background">
+          <div className="relative">
+            <p className="max-w-[600px] text-center font-Akaya text-[30px] text-foreground">
+              Found path from{" "}
+              <span className="text-accent underline">
+                {getTitle(result.result[0][0])}
+              </span>{" "}
+              to{" "}
+              <span className="text-accent underline">
+                {getTitle(result.result[0][result.result[0].length - 1])}
+              </span>{" "}
+              with {graphData.nodes.length} article(s) and{" "}
+              {graphData.edges.length} path(s) in {result.time_elapsed / 1000}{" "}
+              seconds
+            </p>
+            <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
+              <GraphCanvas
+                nodes={graphData.nodes}
+                edges={graphData.edges}
+                theme={myTheme}
+                layoutType="forceatlas2"
+              />
+            </div>
+          </div>
+        </section>
+      )}
     </form>
   )
 }

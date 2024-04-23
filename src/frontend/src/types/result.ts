@@ -1,5 +1,6 @@
 export interface Result {
   result: string[][]
+  articles_count: number
   time_elapsed: number
 }
 

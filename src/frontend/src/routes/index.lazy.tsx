@@ -179,9 +179,8 @@ function Index() {
               <span className="text-accent underline">
                 {getTitle(result.result[0][result.result[0].length - 1])}
               </span>{" "}
-              with {graphData.nodes.length} article(s) and{" "}
-              {graphData.edges.length} path(s) in {result.time_elapsed / 1000}{" "}
-              seconds
+              with {graphData.nodes.length} article(s) after checking{" "}
+              {result.articles_count} article(s) in {result.time_elapsed} ms
             </p>
             <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
               <GraphCanvas

@@ -14,6 +14,17 @@ export function graphiphy(data: Result) {
   })
 
   const nodes: Node[] = Array.from(uniqueNodes).map((node, index) => {
+    if (
+      node === data.result[0][0] ||
+      node === data.result[0][data.result[0].length - 1]
+    ) {
+      return {
+        id: (index + 1).toString(),
+        label: getTitle(node) || "",
+        fill: "#25C9F2",
+      }
+    }
+
     return {
       id: (index + 1).toString(),
       label: getTitle(node) || "",

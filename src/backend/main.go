@@ -41,10 +41,10 @@ func setupRouter() *gin.Engine {
 		end := link.End
 
 		time_start := time.Now()
-		result := bfs(start, end, baseURL)
+		result, visitedURLCount := bfs(start, end, baseURL)
 		time_elapsed := time.Since(time_start)
 
-		c.JSON(http.StatusOK, gin.H{"result": result, "time_elapsed": time_elapsed.Milliseconds()})
+		c.JSON(http.StatusOK, gin.H{"result": result, "articles_count": visitedURLCount, "time_elapsed": time_elapsed.Milliseconds()})
 	})
 
 	r.POST("/single/bfs", func(c *gin.Context) {
@@ -59,10 +59,10 @@ func setupRouter() *gin.Engine {
 		end := link.End
 
 		time_start := time.Now()
-		result := bfs_single(start, end, baseURL)
+		result, visitedURLCount := bfs_single(start, end, baseURL)
 		time_elapsed := time.Since(time_start)
 
-		c.JSON(http.StatusOK, gin.H{"result": result, "time_elapsed": time_elapsed.Milliseconds()})
+		c.JSON(http.StatusOK, gin.H{"result": result, "articles_count": visitedURLCount, "time_elapsed": time_elapsed.Milliseconds()})
 	})
 
 	return r

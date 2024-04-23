@@ -8,7 +8,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
-func bfs(startURL string, endURL string, baseURL string) [][]string {
+func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
 	correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
@@ -19,11 +19,16 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 
 	var solutions SafeArray[[]string]
 
+	depth := 1
+
 	for !found {
 		var newPaths SafeArray[[]string]
 		pathsSize := len(paths.Get())
 		var wg sync.WaitGroup
 		wg.Add(pathsSize)
+
+		fmt.Println("Depth:", depth)
+		depth++
 
 		maxConcurrentRequests := 250
 
@@ -90,10 +95,10 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 		paths.Set(newPaths.Get())
 	}
 
-	return solutions.Get()
+	return solutions.Get(), len(visitedURL.data)
 }
 
-func bfs_single(startURL string, endURL string, baseURL string) [][]string {
+func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
 	correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
@@ -104,11 +109,16 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 
 	var solutions SafeArray[[]string]
 
+	depth := 1
+
 	for !found {
 		var newPaths SafeArray[[]string]
 		pathsSize := len(paths.Get())
 		var wg sync.WaitGroup
 		wg.Add(pathsSize)
+
+		fmt.Println("Depth:", depth)
+		depth++
 
 		maxConcurrentRequests := 250
 
@@ -179,5 +189,5 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 		paths.Set(newPaths.Get())
 	}
 
-	return solutions.Get()
+	return solutions.Get(), len(visitedURL.data)
 }

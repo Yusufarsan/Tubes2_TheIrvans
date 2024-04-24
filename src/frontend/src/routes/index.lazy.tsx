@@ -71,6 +71,7 @@ function Index() {
   const [showMultiplePath, setShowMultiplePath] = useState<boolean>(false)
   const [result, setResult] = useState<Result | null>(null)
   const [graphData, setGraphData] = useState<GraphData | null>(null)
+  const [isFetching, setIsFetching] = useState<boolean>(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -78,6 +79,7 @@ function Index() {
     setGraphData(null)
 
     if (showMultiplePath) {
+      setIsFetching(true)
       const data = await fetch(
         `http://localhost:8080/multiple/${searchMethod}`,
         {
@@ -101,7 +103,9 @@ function Index() {
       setResult(response)
       const { nodes, edges } = graphiphy(response)
       setGraphData({ nodes, edges })
+      setIsFetching(false)
     } else {
+      setIsFetching(true)
       const data = await fetch(`http://localhost:8080/single/${searchMethod}`, {
         method: "POST",
         headers: {
@@ -122,6 +126,7 @@ function Index() {
       setResult(response)
       const { nodes, edges } = graphiphy(response)
       setGraphData({ nodes, edges })
+      setIsFetching(false)
     }
   }
 
@@ -163,8 +168,9 @@ function Index() {
           variant="default"
           size="lg"
           type="submit"
+          disabled={isFetching}
         >
-          Find!
+          {isFetching ? "Finding..." : "Find!"}
         </Button>
       </div>
       {result && graphData && (

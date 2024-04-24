@@ -79,28 +79,27 @@ func (n *Node) dfsRecursive(baseURL string, endURL string, visited map[string]bo
 
 func ids(startURL string, endURL string, baseURL string) ([][]string, int) {
 	// visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
+	// Inisialisasi root sebagai startURL nya dan querriedURL sebagai map untuk nyimpen URL yang udah di query
+	queriedURL := SafeMap[bool]{data: make(map[string]bool)}		// Agak ga penting soalnya hampir ga kepake
 	root := NewNode(startURL)
-	// root.AddChild("https://en.wikipedia.org/wiki/Indonesia")
-	// root.AddChild("https://en.wikipedia.org/wiki/Java")
-	// root.Children["https://en.wikipedia.org/wiki/Indonesia"].AddChild("https://en.wikipedia.org/wiki/Asia")
-	// root.Children["https://en.wikipedia.org/wiki/Indonesia"].AddChild("https://en.wikipedia.org/wiki/Java")
-	// root.Children["https://en.wikipedia.org/wiki/Java"].AddChild("https://en.wikipedia.org/wiki/Philosophy")
-	// root.Children["https://en.wikipedia.org/wiki/Java"].AddChild("https://en.wikipedia.org/wiki/Asia")
 
 	// fmt.Println("Depth-First Search:")
+	// Inisialisasi paths untuk nyimpen solusi dan visitedCount untuk ngitung berapa artikel yang diperiksa
 	var paths = make([][]string, 0)
 	var visitedCount int
 	// var countArticle int
 
+	// Inisialisasi currentLastNodes untuk nyimpen semua simpul pada satu layer tertentu (bergantung di depth mana sehingga nilainya akan berubah ubah)
 	var currentLastNodes SafeArray[*Node]
 	currentLastNodes.Add(root)
 
+	// Inisialisasi depth untuk nyimpen data kedalaman yang bakal ditelusuri, ini akan di increment trs sampe ketemu
 	depth := 0
 
 	// Selama belom ketemu satupun solusi, bakalan di loop
 	for len(paths) == 0 {
-		var newLastNodes SafeArray[*Node]
+		var newLastNodes SafeArray[*Node]		// Inisialisasi newLastNodes untuk memperbarui currentLastNodes (newLastNodes adalah semua simpul setelah layer nya currentLastNodes)
+		
 		var wg sync.WaitGroup
 		wg.Add(len(currentLastNodes.Get()))
 
@@ -108,34 +107,35 @@ func ids(startURL string, endURL string, baseURL string) ([][]string, int) {
 
 		sem := make(chan struct{}, maxConcurrentRequests)
 
-		for _, node := range currentLastNodes.array {
+		for _, node := range currentLastNodes.array {		// iterasi semua simpul pada layer tertentu (pada currentLastNodes)
 			sem <- struct{}{}
 			go func(node *Node) {
 				defer func() { <-sem }()
 				defer wg.Done()
 
-				if _, ok := queriedURL.Get(node.Value); ok {
+				if _, ok := queriedURL.Get(node.Value); ok {	// Kalo udah pernah di query, ga perlu di query lagi (Tapi jarang masuk ke kondisi ini makanya rada ga penting)
 					fmt.Println("Already queried")
 					return
 				}
 
-				doc := makeRequest(node.Value)
+				doc := makeRequest(node.Value)		// Nge scrap ke Wikipedia
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+					doc.Find("a").Each(func(_ int, s *goquery.Selection) {		// Menemukan semua link yang ada di suatu halaman Wikipedia
 						link, _ := s.Attr("href")
 						matched, _ := regexp.MatchString("^/wiki/", link)
 
-						if matched && !duplicateURL[baseURL+link] {
+						if matched && !duplicateURL[baseURL+link] {		// Kalo link nya adalah link ke artikel Wikipedia lain dan belum pernah di cek
 							duplicateURL[baseURL+link] = true
 							// fmt.Println(baseURL + link)
 
-
 							// _, ok := visitedURL.Get(baseURL + link)
 							// if !ok {
-								node.AddChild(baseURL + link)				// nambahin semua anakan dari node
-								newLastNodes.Add(node.Children[baseURL+link])
-							// 	visitedURL.Add(baseURL + link, true)
+							node.AddChild(baseURL + link)				// nambahin semua anakan dari node
+							newLastNodes.Add(node.Children[baseURL+link])	// Membentuk layer baru
+							// visitedURL.Add(baseURL + link, true)
+							// } else {
+								// fmt.Println("Already visited")
 							// }
 								
 						}
@@ -146,59 +146,19 @@ func ids(startURL string, endURL string, baseURL string) ([][]string, int) {
 
 		wg.Wait()
 
-		currentLastNodes.Set(newLastNodes.Get())
+		currentLastNodes.Set(newLastNodes.Get())		// Update currentLastNodes dengan newLastNodes, yaitu layer berikutnya
 
 		fmt.Println("Recursing")
-		paths, visitedCount = root.DFS(baseURL, endURL)
+		paths, visitedCount = root.DFS(baseURL, endURL)	
 		fmt.Println("Finished Recursing")
 
-		depth++
+		depth++		// Increment depth
 		fmt.Println("Depth:", depth)
 	}
 
 	// fmt.Println(paths)
 	// fmt.Println(visitedCount)
 	// fmt.Println(countArticle)
-	// visitedCount = len(visitedURL.data)
 
 	return paths, visitedCount
 }
-
-// func dfs () {
-// 	///
-
-// 	solusi := array of string
-// 	for childnode {
-// 		solusi append dfs()
-// 	}
-
-// 	retun solusi
-// }
-
-// func ids(startURL string, endURL string, baseURL string) ([][]string, int) {
-// 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-
-// 	found := false
-// 	depth := 1
-
-// 	for !found {
-// 		var newPaths SafeArray[[]string]
-// 		pathsSize := len(paths.Get())
-// 		var wg sync.WaitGroup
-// 		wg.Add(pathsSize)
-
-// 		depth++
-
-// 		maxConcurrentRequests := 250
-// 	}
-
-// solution := dfs(startURL, endURL, baseURL, 0)
-
-// Inisialisasi Root Node (startURL)
-// makeRequest(startURL)
-// Append root node dengan setiap link yang ada di dalamnya
-// Traverse dengan DFS dengan batasan depth
-// Jika ditemukan endURL, maka return path
-// Jika tidak ditemukan, maka tambahkan depth dan ulangi proses
-
-// }

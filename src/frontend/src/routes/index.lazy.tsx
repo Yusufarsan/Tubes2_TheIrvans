@@ -13,6 +13,7 @@ import { useState } from "react"
 import { GraphData, Result } from "@/types/result"
 import { getTitle, graphiphy } from "@/lib/graph-formatter"
 import { GraphCanvas, lightTheme } from "reagraph"
+import CardPath from "@/components/ui/card-path"
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -174,30 +175,44 @@ function Index() {
         </Button>
       </div>
       {result && graphData && (
-        <section className="relative flex min-h-screen flex-col items-center gap-[29px] bg-background">
-          <div className="relative">
-            <p className="max-w-[600px] text-center font-Akaya text-[30px] text-foreground">
-              Found path from{" "}
-              <span className="text-accent underline">
-                {getTitle(result.result[0][0])}
-              </span>{" "}
-              to{" "}
-              <span className="text-accent underline">
-                {getTitle(result.result[0][result.result[0].length - 1])}
-              </span>{" "}
-              with {graphData.nodes.length} article(s) after checking{" "}
-              {result.articles_count} article(s) in {result.time_elapsed} ms
-            </p>
-            <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
-              <GraphCanvas
-                nodes={graphData.nodes}
-                edges={graphData.edges}
-                theme={myTheme}
-                layoutType="forceatlas2"
-              />
+        <>
+          <section className="relative flex min-h-[600px] flex-col items-center gap-[29px]">
+            <div className="relative h-full">
+              <p className="max-w-[600px] text-center font-Akaya text-[30px] text-foreground">
+                Found path from{" "}
+                <span className="text-accent underline">
+                  {getTitle(result.result[0][0])}
+                </span>{" "}
+                to{" "}
+                <span className="text-accent underline">
+                  {getTitle(result.result[0][result.result[0].length - 1])}
+                </span>{" "}
+                with {graphData.nodes.length} article(s) after checking{" "}
+                {result.articles_count} article(s) in {result.time_elapsed} ms
+              </p>
+              <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
+                <GraphCanvas
+                  nodes={graphData.nodes}
+                  edges={graphData.edges}
+                  theme={myTheme}
+                  layoutType="forceatlas2"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+          <section className="relative flex flex-col items-center gap-4 pb-12">
+            <div>
+              <h1 className="font-Akaya text-[30px] text-foreground">
+                10 Individual Paths
+              </h1>
+            </div>
+            <div className="flex max-w-[1000px] flex-wrap items-center justify-center gap-4">
+              {result.result.slice(0, 10).map((path, index) => {
+                return <CardPath key={index} path={path} />
+              })}
+            </div>
+          </section>
+        </>
       )}
     </form>
   )

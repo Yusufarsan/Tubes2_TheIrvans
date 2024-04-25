@@ -13,6 +13,7 @@ import { useState } from "react"
 import { GraphData, Result } from "@/types/result"
 import { getTitle, graphiphy } from "@/lib/graph-formatter"
 import { GraphCanvas, lightTheme } from "reagraph"
+import CardPath from "@/components/ui/card-path"
 
 export const Route = createLazyFileRoute("/")({
   component: Index,
@@ -134,37 +135,43 @@ function Index() {
     <form
       method="post"
       onSubmit={handleSubmit}
-      className="flex min-h-[calc(100vh-80px)] flex-col items-center gap-[29px] bg-background"
+      className="z-20 flex min-h-[calc(100vh-80px)] flex-col items-center gap-[29px] bg-background"
     >
-      <p className="mt-[48px] flex justify-center font-Akaya text-[30px] text-foreground">
+      <img
+          src="stima2-bg.jpg"
+          alt="Background Image"
+          className="z-0 absolute h-full w-full object-cover"
+        />
+        <div className="z-0 absolute h-full w-full bg-background opacity-80"></div>
+      <p className="z-10 mt-[48px] flex justify-center font-Akaya text-[30px] text-foreground">
         Find the shortest path from
       </p>
 
-      <div className="flex w-fit flex-col items-center gap-[29px]">
-        <div className="flex items-center gap-[43px]">
+      <div className="z-10 flex w-fit flex-col items-center gap-[29px]">
+        <div className="z-20 flex items-center gap-[43px]">
           <AutoComplete placeholder="Start Title" setURL={setStartURL} />
-          <p className="font-Akaya text-[30px] text-foreground">to</p>
+          <p className="z-10 font-Akaya text-[30px] text-foreground">to</p>
           <AutoComplete placeholder="Goal Title" setURL={setGoalURL} />
         </div>
 
-        <div className=" flex items-center justify-center self-end">
-          <p className="mr-[58px] font-Akaya text-[30px] text-foreground">
+        <div className="z-10  flex items-center justify-center self-end">
+          <p className="z-10 mr-[58px] font-Akaya text-[30px] text-foreground">
             Select searching method:
           </p>
           <HomeSelect setSearchMethod={setSearchMethod} />
         </div>
       </div>
 
-      <div className="mr-[180px] flex items-center">
-        <p className="mr-[58px] font-Akaya text-[30px] text-foreground">
+      <div className="z-0 mr-[180px] flex items-center">
+        <p className="z-10 mr-[58px] font-Akaya text-[30px] text-foreground">
           Show more than one path:
         </p>
         <HomeSwitch setValue={setShowMultiplePath} />
       </div>
 
-      <div className=" flex items-center justify-center">
+      <div className="z-0  flex items-center justify-center">
         <Button
-          className="w-[240px] border-[3px] border-foreground bg-secondary py-[32px] font-Akaya text-[30px] text-foreground hover:bg-accent"
+          className="z-0 w-[240px] border-[3px] border-foreground bg-secondary py-[32px] font-Akaya text-[30px] text-foreground hover:bg-accent"
           variant="default"
           size="lg"
           type="submit"
@@ -173,31 +180,46 @@ function Index() {
           {isFetching ? "Finding..." : "Find!"}
         </Button>
       </div>
+
       {result && graphData && (
-        <section className="relative flex min-h-screen flex-col items-center gap-[29px] bg-background">
-          <div className="relative">
-            <p className="max-w-[600px] text-center font-Akaya text-[30px] text-foreground">
-              Found path from{" "}
-              <span className="text-accent underline">
-                {getTitle(result.result[0][0])}
-              </span>{" "}
-              to{" "}
-              <span className="text-accent underline">
-                {getTitle(result.result[0][result.result[0].length - 1])}
-              </span>{" "}
-              with {graphData.nodes.length} article(s) after checking{" "}
-              {result.articles_count} article(s) in {result.time_elapsed} ms
-            </p>
-            <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
-              <GraphCanvas
-                nodes={graphData.nodes}
-                edges={graphData.edges}
-                theme={myTheme}
-                layoutType="forceatlas2"
-              />
+        <>
+          <section className="relative flex min-h-[600px] flex-col items-center gap-[29px]">
+            <div className="relative h-full">
+              <p className="max-w-[600px] text-center font-Akaya text-[30px] text-foreground">
+                Found path from{" "}
+                <span className="text-accent underline">
+                  {getTitle(result.result[0][0])}
+                </span>{" "}
+                to{" "}
+                <span className="text-accent underline">
+                  {getTitle(result.result[0][result.result[0].length - 1])}
+                </span>{" "}
+                with {graphData.nodes.length} article(s) after checking{" "}
+                {result.articles_count} article(s) in {result.time_elapsed} ms
+              </p>
+              <div className="absolute bottom-1/2 left-1/2 top-[350px] h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-md border-[3px] border-accent">
+                <GraphCanvas
+                  nodes={graphData.nodes}
+                  edges={graphData.edges}
+                  theme={myTheme}
+                  layoutType="forceatlas2"
+                />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+          <section className="relative flex flex-col items-center gap-4 pb-12">
+            <div>
+              <h1 className="font-Akaya text-[30px] text-foreground">
+                10 Individual Paths
+              </h1>
+            </div>
+            <div className="flex max-w-[1000px] flex-wrap items-center justify-center gap-4">
+              {result.result.slice(0, 10).map((path, index) => {
+                return <CardPath key={index} path={path} />
+              })}
+            </div>
+          </section>
+        </>
       )}
     </form>
   )

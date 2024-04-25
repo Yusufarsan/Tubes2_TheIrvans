@@ -2,83 +2,15 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"net/http"
 	"regexp"
 	"sync"
-	"time"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
-type SafeMap[T any] struct {
-	mu   sync.Mutex
-	data map[string]T
-}
-
-func (s *SafeMap[T]) Add(key string, value T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.data[key] = value
-}
-
-func (s *SafeMap[T]) Get(key string) (T, bool) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	value, ok := s.data[key]
-	return value, ok
-}
-
-type SafeArray[T any] struct {
-	mu    sync.Mutex
-	array []T
-}
-
-func (s *SafeArray[T]) Add(value T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.array = append(s.array, value)
-}
-
-func (s *SafeArray[T]) Get() []T {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.array
-}
-
-func (s *SafeArray[T]) Set(array []T) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.array = array
-}
-
-func makeRequest(url string) *goquery.Document {
-	res, err := http.Get(url)
-
-	time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
-
-	if err != nil {
-		return nil
-	}
-
-	defer res.Body.Close()
-
-	if res.StatusCode != 200 {
-		return nil
-	}
-
-	doc, err := goquery.NewDocumentFromReader(res.Body)
-
-	if err != nil {
-		return nil
-	}
-
-	return doc
-}
-
-func bfs(startURL string, endURL string, baseURL string) [][]string {
+func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-	correctURL := SafeMap[[]string]{data: make(map[string][]string)}
+	// correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
 	found := false
 
@@ -87,11 +19,16 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 
 	var solutions SafeArray[[]string]
 
+	depth := 1
+
 	for !found {
 		var newPaths SafeArray[[]string]
 		pathsSize := len(paths.Get())
 		var wg sync.WaitGroup
 		wg.Add(pathsSize)
+
+		fmt.Println("Depth:", depth)
+		depth++
 
 		maxConcurrentRequests := 250
 
@@ -105,15 +42,15 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 				p := paths.Get()[i]
 				node := p[len(p)-1]
 
-				if value, ok := correctURL.Get(node); ok {
-					fmt.Println("Correct URL")
-					for _, path := range value {
-						newPath := append([]string{}, p...)
-						newPath = append(newPath, path)
-						newPaths.Add(newPath)
-					}
-					return
-				}
+				// if value, ok := correctURL.Get(node); ok {
+				// 	fmt.Println("Correct URL")
+				// 	for _, path := range value {
+				// 		newPath := append([]string{}, p...)
+				// 		newPath = append(newPath, path)
+				// 		newPaths.Add(newPath)
+				// 	}
+				// 	return
+				// }
 
 				if _, ok := queriedURL.Get(node); ok {
 					fmt.Println("Already queried")
@@ -133,15 +70,18 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 
 							if baseURL+link == endURL {
 								fmt.Println("Found!")
-								value, _ := correctURL.Get(node)
-								correctURL.Add(node, append(value, baseURL+link))
+								// value, _ := correctURL.Get(node)
+								// correctURL.Add(node, append(value, baseURL+link))
 								found = true
 								solutions.Add(append(p, baseURL+link))
 							}
 
 							_, ok := visitedURL.Get(baseURL + link)
-							if !found && !ok {
+							if !ok {
 								visitedURL.Add(baseURL+link, true)
+							}
+
+							if !found {
 								newPath := make([]string, len(p))
 								copy(newPath, p)
 								newPath = append(newPath, baseURL+link)
@@ -158,12 +98,12 @@ func bfs(startURL string, endURL string, baseURL string) [][]string {
 		paths.Set(newPaths.Get())
 	}
 
-	return solutions.Get()
+	return solutions.Get(), len(visitedURL.data)
 }
 
-func bfs_single(startURL string, endURL string, baseURL string) [][]string {
+func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-	correctURL := SafeMap[[]string]{data: make(map[string][]string)}
+	// correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
 	found := false
 
@@ -172,11 +112,16 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 
 	var solutions SafeArray[[]string]
 
+	depth := 1
+
 	for !found {
 		var newPaths SafeArray[[]string]
 		pathsSize := len(paths.Get())
 		var wg sync.WaitGroup
 		wg.Add(pathsSize)
+
+		fmt.Println("Depth:", depth)
+		depth++
 
 		maxConcurrentRequests := 250
 
@@ -190,15 +135,15 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 				p := paths.Get()[i]
 				node := p[len(p)-1]
 
-				if value, ok := correctURL.Get(node); ok {
-					fmt.Println("Correct URL")
-					for _, path := range value {
-						newPath := append([]string{}, p...)
-						newPath = append(newPath, path)
-						newPaths.Add(newPath)
-					}
-					return
-				}
+				// if value, ok := correctURL.Get(node); ok {
+				// 	fmt.Println("Correct URL")
+				// 	for _, path := range value {
+				// 		newPath := append([]string{}, p...)
+				// 		newPath = append(newPath, path)
+				// 		newPaths.Add(newPath)
+				// 	}
+				// 	return
+				// }
 
 				if found {
 					return
@@ -222,15 +167,18 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 
 							if baseURL+link == endURL && !found {
 								fmt.Println("Found!")
-								value, _ := correctURL.Get(node)
-								correctURL.Add(node, append(value, baseURL+link))
+								// value, _ := correctURL.Get(node)
+								// correctURL.Add(node, append(value, baseURL+link))
 								found = true
 								solutions.Add(append(p, baseURL+link))
 							}
 
 							_, ok := visitedURL.Get(baseURL + link)
-							if !found && !ok {
+							if !ok {
 								visitedURL.Add(baseURL+link, true)
+							}
+
+							if !found {
 								newPath := make([]string, len(p))
 								copy(newPath, p)
 								newPath = append(newPath, baseURL+link)
@@ -247,5 +195,5 @@ func bfs_single(startURL string, endURL string, baseURL string) [][]string {
 		paths.Set(newPaths.Get())
 	}
 
-	return solutions.Get()
+	return solutions.Get(), len(visitedURL.data)
 }

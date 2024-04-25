@@ -121,9 +121,12 @@ func ids(startURL string, endURL string, baseURL string) ([][]string, int) {
 				doc := makeRequest(node.Value) // Nge scrap ke Wikipedia
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) { // Menemukan semua link yang ada di suatu halaman Wikipedia
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) { // Menemukan semua link yang ada di suatu halaman Wikipedia
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] { // Kalo link nya adalah link ke artikel Wikipedia lain dan belum pernah di cek
 							duplicateURL[baseURL+link] = true
@@ -264,9 +267,12 @@ func ids_single(startURL string, endURL string, baseURL string) ([][]string, int
 				doc := makeRequest(node.Value) // Nge scrap ke Wikipedia
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) { // Menemukan semua link yang ada di suatu halaman Wikipedia
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) { // Menemukan semua link yang ada di suatu halaman Wikipedia
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] { // Kalo link nya adalah link ke artikel Wikipedia lain dan belum pernah di cek
 							duplicateURL[baseURL+link] = true

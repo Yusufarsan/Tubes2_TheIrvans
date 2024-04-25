@@ -61,9 +61,12 @@ func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) {
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] {
 							duplicateURL[baseURL+link] = true
@@ -158,9 +161,12 @@ func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int
 
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) {
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] {
 							duplicateURL[baseURL+link] = true

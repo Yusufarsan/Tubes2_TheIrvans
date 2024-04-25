@@ -1,6 +1,5 @@
-import { graphiphy } from "@/lib/graph-formatter"
+import CardPath from "@/components/ui/card-path"
 import { createLazyFileRoute } from "@tanstack/react-router"
-import { GraphCanvas } from "reagraph"
 
 export const Route = createLazyFileRoute("/test")({
   component: Test,
@@ -28,10 +27,11 @@ function Test() {
     time_elapsed: 8414,
   }
 
-  const { nodes, edges } = graphiphy(dummy)
   return (
-    <div className="fixed size-3/4 border border-black">
-      <GraphCanvas nodes={nodes} edges={edges} />
+    <div className="flex max-w-96 flex-col items-center gap-4">
+      {dummy.result.map((path, index) => {
+        return <CardPath key={index} path={path} />
+      })}
     </div>
   )
 }

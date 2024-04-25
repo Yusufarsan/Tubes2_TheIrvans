@@ -40,6 +40,11 @@ func setupRouter() *gin.Engine {
 		start := link.Start
 		end := link.End
 
+		if start == end {
+			c.JSON(http.StatusOK, gin.H{"result": [][]string{{start}}, "articles_count": 1, "time_elapsed": 0})
+			return
+		}
+
 		time_start := time.Now()
 		result, visitedURLCount := bfs(start, end, baseURL)
 		time_elapsed := time.Since(time_start)
@@ -57,6 +62,11 @@ func setupRouter() *gin.Engine {
 
 		start := link.Start
 		end := link.End
+
+		if start == end {
+			c.JSON(http.StatusOK, gin.H{"result": [][]string{{start}}, "articles_count": 1, "time_elapsed": 0})
+			return
+		}
 
 		time_start := time.Now()
 		result, visitedURLCount := bfs_single(start, end, baseURL)
@@ -76,6 +86,11 @@ func setupRouter() *gin.Engine {
 		start := link.Start
 		end := link.End
 
+		if start == end {
+			c.JSON(http.StatusOK, gin.H{"result": [][]string{{start}}, "articles_count": 1, "time_elapsed": 0})
+			return
+		}
+
 		time_start := time.Now()
 		result, visitedURLCount := ids(start, end, baseURL)
 		time_elapsed := time.Since(time_start)
@@ -93,6 +108,11 @@ func setupRouter() *gin.Engine {
 
 		start := link.Start
 		end := link.End
+
+		if start == end {
+			c.JSON(http.StatusOK, gin.H{"result": [][]string{{start}}, "articles_count": 1, "time_elapsed": 0})
+			return
+		}
 
 		time_start := time.Now()
 		result, visitedURLCount := ids_single(start, end, baseURL)

@@ -20,6 +20,12 @@ func (s *SafeMap[T]) Get(key string) (T, bool) {
 	return value, ok
 }
 
+func (s *SafeMap[T]) Replace(smap map[string]T) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.data = smap
+}
+
 type SafeArray[T any] struct {
 	mu    sync.Mutex
 	array []T

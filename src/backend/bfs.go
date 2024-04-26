@@ -10,7 +10,6 @@ import (
 
 func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-	// correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
 	found := false
 
@@ -42,18 +41,7 @@ func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 				p := paths.Get()[i]
 				node := p[len(p)-1]
 
-				// if value, ok := correctURL.Get(node); ok {
-				// 	fmt.Println("Correct URL")
-				// 	for _, path := range value {
-				// 		newPath := append([]string{}, p...)
-				// 		newPath = append(newPath, path)
-				// 		newPaths.Add(newPath)
-				// 	}
-				// 	return
-				// }
-
 				if _, ok := queriedURL.Get(node); ok {
-					fmt.Println("Already queried")
 					return
 				}
 
@@ -61,17 +49,18 @@ func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) {
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] {
 							duplicateURL[baseURL+link] = true
 
 							if baseURL+link == endURL {
 								fmt.Println("Found!")
-								// value, _ := correctURL.Get(node)
-								// correctURL.Add(node, append(value, baseURL+link))
 								found = true
 								solutions.Add(append(p, baseURL+link))
 							}
@@ -103,7 +92,6 @@ func bfs(startURL string, endURL string, baseURL string) ([][]string, int) {
 
 func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int) {
 	visitedURL := SafeMap[bool]{data: make(map[string]bool)}
-	// correctURL := SafeMap[[]string]{data: make(map[string][]string)}
 	queriedURL := SafeMap[bool]{data: make(map[string]bool)}
 	found := false
 
@@ -135,16 +123,6 @@ func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int
 				p := paths.Get()[i]
 				node := p[len(p)-1]
 
-				// if value, ok := correctURL.Get(node); ok {
-				// 	fmt.Println("Correct URL")
-				// 	for _, path := range value {
-				// 		newPath := append([]string{}, p...)
-				// 		newPath = append(newPath, path)
-				// 		newPaths.Add(newPath)
-				// 	}
-				// 	return
-				// }
-
 				if found {
 					return
 				}
@@ -158,17 +136,18 @@ func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int
 
 				if doc != nil {
 					duplicateURL := make(map[string]bool)
-					doc.Find("a").Each(func(_ int, s *goquery.Selection) {
+
+					bodyContent := doc.Find("#bodyContent")
+
+					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) {
 						link, _ := s.Attr("href")
-						matched, _ := regexp.MatchString("^/wiki/", link)
+						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 
 						if matched && !duplicateURL[baseURL+link] {
 							duplicateURL[baseURL+link] = true
 
 							if baseURL+link == endURL && !found {
 								fmt.Println("Found!")
-								// value, _ := correctURL.Get(node)
-								// correctURL.Add(node, append(value, baseURL+link))
 								found = true
 								solutions.Add(append(p, baseURL+link))
 							}

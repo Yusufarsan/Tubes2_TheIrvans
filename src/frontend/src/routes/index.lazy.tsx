@@ -34,7 +34,7 @@ function HomeSelect({
           Iterative Deepening Search
         </SelectItem>
         <SelectItem className="text-[30px]" value="bfs">
-          Breadth Depth Search
+          Breadth First Search
         </SelectItem>
       </SelectContent>
     </Select>

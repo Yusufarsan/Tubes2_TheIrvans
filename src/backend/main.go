@@ -129,27 +129,3 @@ func main() {
 	// Listen and Server in 0.0.0.0:8080
 	r.Run(":8080")
 }
-
-// Ini main untuk nge test IDS
-// func main() {
-// 	startURL := "https://en.wikipedia.org/wiki/Joko_Widodo"
-// 	endURL := "https://en.wikipedia.org/wiki/Philosophy"
-
-// 	time_start := time.Now()
-
-// 	paths, visitedCount := ids(startURL, endURL, baseURL)
-// 	time_elapsed := time.Since(time_start)
-
-// 	// Menghitung artikel yang dilalui
-// 	// var countArticle int
-// 	// for _, path := range paths {
-// 	// 	countArticle += len(path)
-// 	// }
-// 	// countArticle -= 2*(len(paths)-1)
-
-// 	fmt.Println("Depth-First Search:")
-// 	fmt.Println("Result:", paths)
-// 	fmt.Println("Checked articles:", visitedCount) // Artikel yang diperiksa
-// 	// fmt.Println("Visited article inside the paths:", countArticle)		// Artikel yang dilalui (menuju ke endURL) ----- jadinya diitung di FE aja
-// 	fmt.Println("Time Elapsed:", time_elapsed)
-// }

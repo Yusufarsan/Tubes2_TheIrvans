@@ -1,8 +1,8 @@
 # Tugas Besar 2 IF2211 Strategi Algoritma
 
 ## Deskripsi
-
-Website ini bertujuan untuk mencari rute artikel terpendek dari satu artikel ke artikel lainnya. Setelah User memasukkan judul artikel awal dan judul artikel tujuan dan menge-klik tombol “Find!”, akan ditampilkan:
+WikiRace atau Wiki Game adalah permainan yang melibatkan Wikipedia, sebuah ensiklopedia online gratis yang dikelola oleh berbagai sukarelawan di seluruh dunia, di mana pemain memulai dari sebuah artikel Wikipedia dan harus menelusuri artikel lain di Wikipedia (dengan mengklik tautan di dalam setiap artikel) untuk mencapai tujuan yang telah ditentukan. Artikel dalam waktu sesingkat-singkatnya atau dengan klik (artikel) paling sedikit.
+Website kami bertujuan untuk mencari rute artikel terpendek dari satu artikel ke artikel lainnya. Setelah User memasukkan judul artikel awal dan judul artikel tujuan dan menge-klik tombol “Find!”, akan ditampilkan:
 1. Jumlah artikel yang diperiksa
 
 2. Jumlah artikel yang lolos

@@ -163,6 +163,11 @@ func bfs_single(startURL string, endURL string, baseURL string) ([][]string, int
 					bodyContent := doc.Find("#bodyContent")
 
 					bodyContent.Find("a").Each(func(_ int, s *goquery.Selection) {
+						// Jika sudah ketemu, maka hentikan
+						if found {
+							return
+						}
+						
 						link, _ := s.Attr("href")
 						matched, _ := regexp.MatchString("^/wiki/[^:]+$", link)
 

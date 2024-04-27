@@ -59,6 +59,19 @@ function About() {
               will also be displayed.
             </p>
           </div>
+          <div className="flex justify-center">
+            <iframe
+              className="mt-[30px]"
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/w5tLoWAn1vU?si=jJ-iBLc1rOOTO4DX"
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              referrerPolicy="strict-origin-when-cross-origin"
+              allowFullScreen
+            ></iframe>
+          </div>
         </section>
 
         <Separator className="relative max-w-[1500px] self-center bg-white" />

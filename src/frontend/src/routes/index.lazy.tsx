@@ -210,7 +210,7 @@ function Index() {
           <section className="relative flex flex-col items-center gap-4 pb-12">
             <div>
               <h1 className="font-Akaya text-[30px] text-foreground">
-                10 Individual Paths
+                Showing at most 10 individual paths
               </h1>
             </div>
             <div className="flex max-w-[1000px] flex-wrap items-center justify-center gap-4">
